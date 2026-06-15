@@ -57,7 +57,7 @@ interface ShareModalProps {
 
 function ShareModal({ isOpen, onClose }: ShareModalProps) {
   const [copied, setCopied] = useState(false);
-  const appUrl = "https://focusly.app";
+  const appUrl = "https://timer-three-bay.vercel.app/";
   const shareMessage = `🚀 Just discovered Focusly - an amazing study timer & productivity app! 📚✨\n\nBoost your focus with:\n✓ Pomodoro timers\n✓ Beautiful focus modes\n✓ Study streak tracking\n✓ Distraction-free interface\n\nJoin me and level up your productivity!\n\n${appUrl}`;
   const encodedMessage = encodeURIComponent(shareMessage);
 
@@ -93,6 +93,12 @@ function ShareModal({ isOpen, onClose }: ShareModalProps) {
             <path d="M1 1l8 8M9 1L1 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
           </svg>
         </button>
+
+        {/* Logo */}
+        <div className="flex justify-center mb-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="Focusly Logo" className="h-16 w-auto object-contain" />
+        </div>
 
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
