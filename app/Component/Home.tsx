@@ -49,6 +49,144 @@ const TRACKS = [
 function pad(n: number) { return String(n).padStart(2, "0"); }
 function fmtTime(s: number) { return `${pad(Math.floor(s / 60))}:${pad(s % 60)}`; }
 
+// ── Share Modal ────────────────────────────────────────────────
+interface ShareModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+function ShareModal({ isOpen, onClose }: ShareModalProps) {
+  const [copied, setCopied] = useState(false);
+  const appUrl = "https://focusly.app";
+  const shareMessage = `🚀 Just discovered Focusly - an amazing study timer & productivity app! 📚✨\n\nBoost your focus with:\n✓ Pomodoro timers\n✓ Beautiful focus modes\n✓ Study streak tracking\n✓ Distraction-free interface\n\nJoin me and level up your productivity!\n\n${appUrl}`;
+  const encodedMessage = encodeURIComponent(shareMessage);
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(shareMessage).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      onClick={onClose}>
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+
+      {/* Modal */}
+      <div className="relative rounded-3xl p-6 sm:p-8 w-full max-w-md"
+        style={{
+          background: "#000000",
+          border: "2px solid transparent",
+          boxShadow: "0 0 20px rgba(116,50,255,0.8), 0 0 40px rgba(116,50,255,0.6), 0 0 60px rgba(116,50,255,0.4), inset 0 0 20px rgba(116,50,255,0.2)",
+        }}
+        onClick={e => e.stopPropagation()}>
+
+        {/* Close button */}
+        <button onClick={onClose}
+          className="absolute top-4 right-4 w-7 h-7 rounded-full flex items-center justify-center text-white/40 hover:text-white/80 transition-colors"
+          style={{ border: "1px solid rgba(255,255,255,0.12)" }}>
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+            <path d="M1 1l8 8M9 1L1 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
+        </button>
+
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+            style={{
+              background: "linear-gradient(135deg, #7432FF, #B18BFF)",
+              boxShadow: "0 4px 15px rgba(116,50,255,0.3)",
+            }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-lg sm:text-xl font-bold text-white">Share Focusly</h3>
+            <p className="text-xs text-white/40">Invite your friends to focus</p>
+          </div>
+        </div>
+
+        {/* Message preview */}
+        <div className="rounded-2xl p-4 mb-6"
+          style={{
+            background: "rgba(116,50,255,0.08)",
+            border: "1px solid rgba(178,139,255,0.15)",
+          }}>
+          <p className="text-xs text-white/40 uppercase tracking-widest mb-3 font-semibold">Message Preview</p>
+          <p className="text-sm text-white/80 leading-relaxed line-clamp-6">
+            {shareMessage}
+          </p>
+        </div>
+
+        {/* Link box */}
+        <div className="rounded-2xl p-4 mb-6 flex items-center justify-between"
+          style={{
+            background: "rgba(74,222,128,0.08)",
+            border: "1px solid rgba(74,222,128,0.20)",
+          }}>
+          <div>
+            <p className="text-xs text-white/40 uppercase tracking-widest font-semibold mb-1">App Link</p>
+            <p className="text-sm font-mono text-white/70">{appUrl}</p>
+          </div>
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex gap-3 flex-col sm:flex-row">
+          {/* Copy Link button */}
+          <button onClick={copyToClipboard}
+            className="flex-1 py-3 rounded-xl text-sm font-bold transition-all active:scale-95 flex items-center justify-center gap-2"
+            style={{
+              background: copied ? "rgba(74,222,128,0.15)" : "rgba(255,255,255,0.08)",
+              color: copied ? "#4ade80" : "rgba(255,255,255,0.85)",
+              border: copied ? "1px solid rgba(74,222,128,0.30)" : "1px solid rgba(255,255,255,0.12)",
+            }}>
+            {copied ? (
+              <>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20 6L9 17l-5-5"/>
+                </svg>
+                Copied!
+              </>
+            ) : (
+              <>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+                Copy Message
+              </>
+            )}
+          </button>
+
+          {/* Twitter Share button */}
+          <a href={`https://twitter.com/intent/tweet?text=${encodedMessage}`}
+            target="_blank" rel="noopener noreferrer"
+            className="flex-1 py-3 rounded-xl text-sm font-bold text-white transition-all active:scale-95 flex items-center justify-center gap-2"
+            style={{
+              background: "#1DA1F2",
+              boxShadow: "0 4px 20px rgba(29,161,242,0.35)",
+            }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/>
+            </svg>
+            Tweet
+          </a>
+        </div>
+
+        {/* Footer */}
+        <p className="text-center text-xs text-white/40 mt-4">
+          Help spread the focus! 🌟
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function playChime() {
   try {
     const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -652,6 +790,7 @@ export default function Home() {
   const [total,     setTotal]     = useState(25 * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [done,      setDone]      = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
   const tickerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // ── Tasks ──
@@ -842,7 +981,7 @@ export default function Home() {
       <div className="relative z-10 flex flex-col items-center gap-5 sm:gap-6 px-4 mt-20 sm:mt-0">
 
         {/* Mode switcher */}
-        <ModeSwitcher mode={appMode} onChange={m => { setAppMode(m); setIsRunning(false); resetTimer(); }} />
+        <ModeSwitcher mode={appMode} onChange={m => { setAppMode(m); }} />
 
         {/* ── TIMER mode ── */}
         {appMode === "timer" && (<>
@@ -922,6 +1061,17 @@ export default function Home() {
         </div>
       </div>
 
+      {/* ── SHARE button — above BG PICKER ── */}
+      <button
+        onClick={() => setShareModalOpen(true)}
+        className="hidden sm:flex absolute bottom-[128px] right-8 z-10 w-9 h-9 rounded-xl items-center justify-center transition-all active:scale-95 hover:scale-110"
+        style={{ background: "rgba(255,255,255,0.10)", border: "1px solid rgba(178,139,255,0.20)" }}
+        title="Share Focusly">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+      </button>
+
       {/* ── FULLSCREEN button — desktop only ── */}
       <button
         onClick={() => {
@@ -975,19 +1125,33 @@ export default function Home() {
             </div>
           </div>
         )}
-        <button
-          onClick={() => setBgPanelOpen(o => !o)}
-          className="w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-95"
-          style={bgPanelOpen
-            ? iconBtnStyle
-            : { background:"rgba(255,255,255,0.10)", border:"1px solid rgba(178,139,255,0.20)" }}
-          title="Change background">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.70)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2"/>
-            <circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21,15 16,10 5,21"/>
-          </svg>
-        </button>
+        <div className="flex gap-2">
+          {/* Mobile Share Icon */}
+          <button
+            onClick={() => setShareModalOpen(true)}
+            className="sm:hidden w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-95"
+            style={{ background:"rgba(255,255,255,0.10)", border:"1px solid rgba(178,139,255,0.20)" }}
+            title="Share Focusly">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.70)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+          </button>
+          
+          {/* Background Button */}
+          <button
+            onClick={() => setBgPanelOpen(o => !o)}
+            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-95"
+            style={bgPanelOpen
+              ? iconBtnStyle
+              : { background:"rgba(255,255,255,0.10)", border:"1px solid rgba(178,139,255,0.20)" }}
+            title="Change background">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.70)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21,15 16,10 5,21"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* ── BOTTOM ICONS (task + music + forest) ── */}
@@ -1196,6 +1360,9 @@ export default function Home() {
         </div>
 
       </div>
+
+      {/* Share Modal */}
+      <ShareModal isOpen={shareModalOpen} onClose={() => setShareModalOpen(false)} />
     </div>
   );
 }
