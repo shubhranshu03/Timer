@@ -28,13 +28,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://focusly.app",
+    url: "https://timer-three-bay.vercel.app/",
     title: "Focusly – Smart Study Timer & Pomodoro App for Students",
     description: "Boost your productivity with Focusly. Track study sessions, use Pomodoro timers, build streaks, monitor subjects, and stay focused with a beautiful distraction-free study dashboard.",
     siteName: "Focusly",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/og.png",
         width: 1200,
         height: 630,
         alt: "Focusly - Study Timer & Productivity App",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Focusly | Study Timer, Pomodoro & Focus Tracker",
     description: "Boost your productivity with Focusly. Track study sessions, use Pomodoro timers, build streaks, monitor subjects, and stay focused with a beautiful distraction-free study dashboard.",
-    images: ["/og-image.jpg"],
+    images: ["/og.png"],
     creator: "@martin745943021",
   },
 
