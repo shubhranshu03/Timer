@@ -135,8 +135,7 @@ function StreakHeatmap({ visitedDays, currentStreak }: { visitedDays: Set<string
                 style={{
                   width: 14, height: 14, borderRadius: 2,
                   background: isFuture ? "rgba(255,255,255,0.04)" : visited ? "linear-gradient(135deg,#7432FF,#B18BFF)" : "rgba(255,255,255,0.07)",
-                  outline: isToday ? "1.5px solid #B18BFF" : "none",
-                  outlineOffset: "1px",
+                  border: isToday ? "1px solid rgba(178,139,255,0.5)" : "none",
                 }}
               />
             );
@@ -678,9 +677,15 @@ export default function Home() {
   useEffect(() => {
     const audio = new Audio();
     audio.loop = true; audio.volume = 0.6;
+    // Prevent pausing on page blur/minimize (mobile)
+    audio.onpause = () => {
+      if (isPlaying && audioRef.current) {
+        setTimeout(() => { audioRef.current?.play().catch(() => {}); }, 100);
+      }
+    };
     audioRef.current = audio;
     return () => { audio.pause(); };
-  }, []);
+  }, [isPlaying]);
 
   useEffect(() => {
     if (activeTrack === null || !audioRef.current) return;
@@ -690,6 +695,26 @@ export default function Home() {
   }, [activeTrack]);
 
   useEffect(() => { if (audioRef.current) audioRef.current.volume = volume; }, [volume]);
+
+  // Handle page visibility to keep audio playing on mobile
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // App is hidden - stop music
+        if (audioRef.current && isPlaying) {
+          audioRef.current.pause();
+          setIsPlaying(false);
+        }
+      } else {
+        // App became visible again - resume if was playing
+        if (isPlaying && audioRef.current && audioRef.current.paused) {
+          audioRef.current.play().catch(() => {});
+        }
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [isPlaying]);
 
   const togglePlay = () => {
     if (!audioRef.current) return;
